@@ -62,7 +62,7 @@ text {font:600 14px system-ui;fill:#e9edf2;paint-order:stroke;stroke:rgba(15,18,
 (() => {
 const cx=180,cy=182,rMinutes=140,rHours=96;
 const MINUTE_STEP=5,MINUTE_DIVS=12,HOUR_DIVS=12;
-let hour=7,minute=30;
+let hour=12,minute=0;
 let activeRing=null,isDragging=false,startAngle=0;
 let rotation={hours:0,minutes:0};
 
@@ -197,4 +197,5 @@ function norm(deg){ return ((deg%360)+360)%360; }
 })();
 </script>
 </body>
+
 </html>
