@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Combined Alarm Interface</title>
+    <title>Combined Alarm Interface - Fixed Proportion</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -15,7 +15,7 @@
         }
 
         body {
-            background-color: #000; /* Bezel color */
+            background-color: #000;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -26,22 +26,21 @@
             touch-action: none;
         }
 
-        /* Mobile Screen Container - iPhone 16 Pro Dimensions */
         .mobile-screen {
             width: 100vw;
             height: 100vh;
-            max-width: 393px; /* iPhone 16 Width in points */
-            max-height: 852px; /* iPhone 16 Height in points */
+            max-width: 393px; 
+            max-height: 852px; 
             background-color: var(--bg-color);
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* --- CLOCK SECTION (Top Left) --- */
+        /* --- CLOCK SECTION --- */
         .clock-section {
             position: absolute;
-            top: -60px; /* Offset to match your mockup */
+            top: -60px;
             left: -80px;
             width: 350px;
             height: 350px;
@@ -57,7 +56,7 @@
             font-weight: 800;
             color: var(--accent);
             text-shadow: var(--glow);
-            transform: translate(230px, 90px); /* Positioning the text relative to the offset circle */
+            transform: translate(230px, 90px);
         }
 
         .clock-container {
@@ -118,7 +117,6 @@
             height: 350px;
             border: 4px solid var(--ring-outer-color);
             box-shadow: inset 0 0 15px rgba(250,250,250,1);
-            
         }
 
         #inner-ring {
@@ -139,13 +137,13 @@
             color: #94a3b8;
         }
 
-        /* --- LOCK SECTION (Bottom Right) --- */
+        /* --- LOCK SECTION (RESIZED CANVAS) --- */
         .lock-section {
             position: absolute;
-            bottom: 0px;
-            right: -40px;
-            width: 250px;
-            height: 250px;
+            bottom: -50px; /* Offset adjusted for the larger viewBox padding */
+            right: -50px;
+            width: 320px; /* Width increased to hold the expanded viewBox without shrinking ring */
+            height: 320px;
         }
 
         #lock-svg {
@@ -157,14 +155,12 @@
 
         .ring-bg {
             fill: none;
-             r: 50;
             stroke: rgba(255,255,255,0.1);
             stroke-width: 19;
         }
 
         .ring-progress {
             fill: none;
-             r: 50;
             stroke: var(--accent);
             stroke-width: 14;
             stroke-linecap: round;
@@ -173,10 +169,8 @@
 
         #handle-indicator {
             fill: var(--accent);
-            r: 9;
             stroke: white;
             stroke-width: 1.5;
-            cursor: grab;
         }
 
         .handle-halo {
@@ -214,18 +208,19 @@
     </div>
 
     <div class="lock-section" id="lock-zone">
-        <svg viewBox="0 0 100 100" id="lock-svg">
-            <circle class="ring-bg" cx="50" cy="50" r="45" />
-            <circle id="progress" class="ring-progress" cx="50" cy="50" r="45" />
-            <circle id="handle-halo" class="handle-halo" cx="0" cy="0" r="10" />
-            <circle id="handle-indicator" cx="0" cy="0" r="6" />
+        <div class="finish-label">finish</div>
+        <svg viewBox="0 0 150 150" id="lock-svg">
+            <circle class="ring-bg" cx="75" cy="75" r="50" />
+            <circle id="progress" class="ring-progress" cx="75" cy="75" r="50" />
+            <circle id="handle-halo" class="handle-halo" r="12" />
+            <circle id="handle-indicator" r="9" />
         </svg>
     </div>
 
 </div>
 
 <script>
-    /* --- CLOCK SCRIPT (Preserved Original) --- */
+    /* --- CLOCK SCRIPT --- */
     const outerRing = document.getElementById('outer-ring');
     const innerRing = document.getElementById('inner-ring');
     const display = document.getElementById('display');
@@ -293,13 +288,15 @@
     setupRing(outerRing, true);
     setupRing(innerRing, false);
 
-    /* --- LOCK SCRIPT (Preserved Original) --- */
+    /* --- LOCK SCRIPT --- */
     const progress = document.getElementById('progress');
     const lockZone = document.getElementById('lock-zone');
     const handleIndicator = document.getElementById('handle-indicator');
     const handleHalo = document.getElementById('handle-halo');
-    const radius = 50;
-    const center = 50;
+    
+    // Kept at 50 as requested
+    const radius = 50; 
+    const center = 75; // Center shifted to match 150x150 viewBox
     const circumference = 2 * Math.PI * radius;
     const gapAngle = 60;
     const initialOffset = (gapAngle / 360) * circumference;
@@ -351,3 +348,4 @@
 
 </body>
 </html>
+
