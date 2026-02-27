@@ -2,38 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concentric Alarm Clock - Visual Update</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Combined Alarm Interface</title>
     <style>
         :root {
             --bg-color: #0f172a;
-            --accent-color: #38bdf8;
+            --accent: #38bdf8;
             --text-color: #ffffff;
-            --ring-outer: rgba(56, 189, 248, 0.2);
-            --ring-inner: rgba(56, 189, 248, 0.2);
+            --ring-outer-color: rgba(56, 189, 248, 0.2);
+            --ring-inner-color: rgba(56, 189, 248, 0.2);
             --glow: 0 0 15px rgba(56, 189, 248, 0.6);
         }
 
         body {
+            background-color: #000; /* Bezel color */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            touch-action: none;
+        }
+
+        /* Mobile Screen Container - iPhone 16 Pro Dimensions */
+        .mobile-screen {
+            width: 100vw;
+            height: 100vh;
+            max-width: 393px; /* iPhone 16 Width in points */
+            max-height: 852px; /* iPhone 16 Height in points */
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        /* --- CLOCK SECTION (Top Left) --- */
+        .clock-section {
+            position: absolute;
+            top: -60px; /* Offset to match your mockup */
+            left: -80px;
+            width: 350px;
+            height: 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            touch-action: none;
         }
 
         .time-display {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 10px;
             font-weight: 800;
-            color: var(--accent-color);
+            color: var(--accent);
             text-shadow: var(--glow);
+            transform: translate(230px, 90px); /* Positioning the text relative to the offset circle */
         }
 
         .clock-container {
@@ -45,7 +69,6 @@
             align-items: center;
         }
 
-        /* Triangle Pointers positioned as requested */
         .pointers {
             position: absolute;
             width: 100%;
@@ -58,28 +81,24 @@
             pointer-events: none;
         }
 
-        /* Outside arrow pointing in (left) */
         .arrow-outer {
             position: absolute;
-            right: -25px;
-            width: 0; 
-            height: 0; 
+            right: -35px;
+            width: 0; height: 0; 
             border-top: 12px solid transparent;
             border-bottom: 12px solid transparent;
-            border-right: 18px solid var(--accent-color);
-            filter: drop-shadow(0 0 5px var(--accent-color));
+            border-right: 18px solid var(--accent);
+            filter: drop-shadow(0 0 5px var(--accent));
         }
 
-        /* Inside arrow pointing out (right) */
         .arrow-inner {
             position: absolute;
-            left: 205px; /* Adjusted for the inner ring gap */
-            width: 0; 
-            height: 0; 
+            left: 225px;
+            width: 0; height: 0; 
             border-top: 12px solid transparent;
             border-bottom: 12px solid transparent;
-            border-left: 18px solid var(--accent-color);
-            filter: drop-shadow(0 0 5px var(--accent-color));
+            border-left: 18px solid var(--accent);
+            filter: drop-shadow(0 0 5px var(--accent));
         }
 
         .ring {
@@ -94,19 +113,18 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
-        .ring:active { cursor: grabbing; }
-
         #outer-ring {
-            width: 320px;
-            height: 320px;
-            border: 4px solid var(--ring-outer);
-            box-shadow: inset 0 0 20px 
+            width: 350px;
+            height: 350px;
+            border: 4px solid var(--ring-outer-color);
+            box-shadow: inset 0 0 15px rgba(250,250,250,1);
+            
         }
 
         #inner-ring {
-            width: 200px;
-            height: 200px;
-            border: 4px solid var(--ring-inner);
+            width: 250px;
+            height: 250px;
+            border: 4px solid var(--ring-inner-color);
             box-shadow: inset 0 0 15px rgba(0,0,0,1);
         }
 
@@ -117,125 +135,219 @@
             text-align: center;
             line-height: 30px;
             font-weight: 600;
-            font-size: 1.25rem;
+            font-size: 1.50rem;
             color: #94a3b8;
         }
 
-        .helper-text {
-            margin-top: 40px;
-            color: #475569;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        /* --- LOCK SECTION (Bottom Right) --- */
+        .lock-section {
+            position: absolute;
+            bottom: 0px;
+            right: -40px;
+            width: 250px;
+            height: 250px;
+        }
+
+        #lock-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-105deg); 
+            overflow: visible;
+        }
+
+        .ring-bg {
+            fill: none;
+             r: 50;
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 19;
+        }
+
+        .ring-progress {
+            fill: none;
+             r: 50;
+            stroke: var(--accent);
+            stroke-width: 14;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 5px var(--accent));
+        }
+
+        #handle-indicator {
+            fill: var(--accent);
+            r: 9;
+            stroke: white;
+            stroke-width: 1.5;
+            cursor: grab;
+        }
+
+        .handle-halo {
+            fill: rgba(250, 250, 250, 0.5);
+            filter: blur(4px);
+        }
+
+        .finish-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-family: serif;
+            font-style: italic;
+            font-size: 1.4rem;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="time-display" id="display">12:00</div>
-
-    <div class="clock-container" id="clock-boundary">
-        <div class="pointers">
-            <div class="arrow-inner"></div> <div class="arrow-outer"></div> </div>
-
-        <div id="outer-ring" class="ring"></div>
-        <div id="inner-ring" class="ring"></div>
+<div class="mobile-screen">
+    
+    <div class="clock-section">
+        <div class="time-display" id="display">12:00</div>
+        <div class="clock-container">
+            <div class="pointers">
+                <div class="arrow-inner"></div> 
+                <div class="arrow-outer"></div> 
+            </div>
+            <div id="outer-ring" class="ring"></div>
+            <div id="inner-ring" class="ring"></div>
+        </div>
     </div>
 
-    <div class="helper-text">Drag rings to align time with arrows</div>
+    <div class="lock-section" id="lock-zone">
+        <svg viewBox="0 0 100 100" id="lock-svg">
+            <circle class="ring-bg" cx="50" cy="50" r="45" />
+            <circle id="progress" class="ring-progress" cx="50" cy="50" r="45" />
+            <circle id="handle-halo" class="handle-halo" cx="0" cy="0" r="10" />
+            <circle id="handle-indicator" cx="0" cy="0" r="6" />
+        </svg>
+    </div>
 
-    <script>
-        const outerRing = document.getElementById('outer-ring');
-        const innerRing = document.getElementById('inner-ring');
-        const display = document.getElementById('display');
+</div>
 
-        let state = { hour: 12, minute: 0 };
+<script>
+    /* --- CLOCK SCRIPT (Preserved Original) --- */
+    const outerRing = document.getElementById('outer-ring');
+    const innerRing = document.getElementById('inner-ring');
+    const display = document.getElementById('display');
+    let state = { hour: 12, minute: 0 };
 
-        function createNumbers(ring, count, step, radius) {
-            for (let i = 0; i < count; i++) {
-                const num = document.createElement('div');
-                num.className = 'number';
-                const val = i * step;
-                num.innerText = ring.id === 'inner-ring' ? (i === 0 ? 12 : i) : (val < 10 ? '0'+val : val);
-                
-                const angle = (i * (360 / count)) * (Math.PI / 180);
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                
-                num.style.left = `calc(50% + ${x}px - 15px)`;
-                num.style.top = `calc(50% + ${y}px - 15px)`;
-                ring.appendChild(num);
+    function createNumbers(ring, count, step, radius) {
+        for (let i = 0; i < count; i++) {
+            const num = document.createElement('div');
+            num.className = 'number';
+            const val = i * step;
+            num.innerText = ring.id === 'inner-ring' ? (i === 0 ? 12 : i) : (val < 10 ? '0'+val : val);
+            const angle = (i * (360 / count)) * (Math.PI / 180);
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            num.style.left = `calc(50% + ${x}px - 15px)`;
+            num.style.top = `calc(50% + ${y}px - 15px)`;
+            ring.appendChild(num);
+        }
+    }
+    createNumbers(outerRing, 12, 5, 150);
+    createNumbers(innerRing, 12, 1, 95);
+
+    function handleRotation(e, ring, isOuter) {
+        const rect = ring.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+        ring.style.transform = `rotate(${angle}deg)`;
+        ring.querySelectorAll('.number').forEach(n => n.style.transform = `rotate(${-angle}deg)`);
+        let normalized = (angle < 0) ? angle + 360 : angle;
+        let slice = Math.round((360 - normalized) / 30) % 12;
+        if (isOuter) state.minute = (slice * 5) % 60;
+        else state.hour = slice === 0 ? 12 : slice;
+        display.innerText = `${state.hour}:${state.minute < 10 ? '0'+state.minute : state.minute}`;
+    }
+
+    function setupRing(ring, isOuter) {
+        let isDragging = false;
+        const start = () => isDragging = true;
+        const stop = () => {
+            isDragging = false;
+            const currentRotation = ring.style.transform.match(/rotate\((.*)deg\)/);
+            if (currentRotation) {
+                let angle = parseFloat(currentRotation[1]);
+                let snapped = Math.round(angle / 30) * 30;
+                ring.style.transition = 'transform 0.2s ease-out';
+                ring.style.transform = `rotate(${snapped}deg)`;
+                ring.querySelectorAll('.number').forEach(n => {
+                    n.style.transition = 'transform 0.2s';
+                    n.style.transform = `rotate(${-snapped}deg)`;
+                });
+                setTimeout(() => ring.style.transition = 'none', 200);
+            }
+        };
+        const move = (e) => { if (isDragging) handleRotation(e, ring, isOuter); };
+        ring.addEventListener('mousedown', start);
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', stop);
+        ring.addEventListener('touchstart', start);
+        window.addEventListener('touchmove', move);
+        window.addEventListener('touchend', stop);
+    }
+    setupRing(outerRing, true);
+    setupRing(innerRing, false);
+
+    /* --- LOCK SCRIPT (Preserved Original) --- */
+    const progress = document.getElementById('progress');
+    const lockZone = document.getElementById('lock-zone');
+    const handleIndicator = document.getElementById('handle-indicator');
+    const handleHalo = document.getElementById('handle-halo');
+    const radius = 50;
+    const center = 50;
+    const circumference = 2 * Math.PI * radius;
+    const gapAngle = 60;
+    const initialOffset = (gapAngle / 360) * circumference;
+
+    progress.style.strokeDasharray = circumference;
+    progress.style.strokeDashoffset = initialOffset;
+
+    function updateHandlePosition(degrees) {
+        const angleRad = degrees * (Math.PI / 180);
+        const x = center + radius * Math.cos(angleRad);
+        const y = center + radius * Math.sin(angleRad);
+        handleIndicator.setAttribute('cx', x);
+        handleIndicator.setAttribute('cy', y);
+        handleHalo.setAttribute('cx', x);
+        handleHalo.setAttribute('cy', y);
+    }
+    updateHandlePosition(300);
+
+    let isLockDragging = false;
+    const updateLock = (e) => {
+        if (!isLockDragging) return;
+        const rect = lockZone.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+        let normalized = (angle + 105 + 360) % 360;
+        if (normalized >= 330 || normalized <= 10) {
+            progress.style.strokeDashoffset = 0;
+            updateHandlePosition(360);
+            lockZone.style.filter = "brightness(1.5)";
+        } else if (normalized < 330) {
+            let newOffset = circumference - (normalized / 360 * circumference);
+            if (newOffset < initialOffset) {
+                progress.style.strokeDashoffset = newOffset;
+                updateHandlePosition(normalized);
+                lockZone.style.filter = "brightness(1.0)";
             }
         }
+    };
+    lockZone.addEventListener('mousedown', () => isLockDragging = true);
+    window.addEventListener('mousemove', updateLock);
+    window.addEventListener('mouseup', () => isLockDragging = false);
+    lockZone.addEventListener('touchstart', (e) => { if (e.touches.length === 1) e.preventDefault(); isLockDragging = true; });
+    window.addEventListener('touchmove', updateLock);
+    window.addEventListener('touchend', () => isLockDragging = false);
+</script>
 
-        createNumbers(outerRing, 12, 5, 130);
-        createNumbers(innerRing, 12, 1, 75);
-
-        function handleRotation(e, ring, isOuter) {
-            const rect = ring.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-            let angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
-            ring.style.transform = `rotate(${angle}deg)`;
-            
-            const numbers = ring.querySelectorAll('.number');
-            numbers.forEach(n => n.style.transform = `rotate(${-angle}deg)`);
-
-            // Logic: find which number is at 0 degrees (the right side)
-            let normalized = (angle < 0) ? angle + 360 : angle;
-            let slice = Math.round((360 - normalized) / 30) % 12;
-            
-            if (isOuter) {
-                state.minute = (slice * 5) % 60;
-            } else {
-                let hourVal = slice === 0 ? 12 : slice;
-                state.hour = hourVal;
-            }
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            const m = state.minute < 10 ? '0' + state.minute : state.minute;
-            display.innerText = `${state.hour}:${m}`;
-        }
-
-        function setupRing(ring, isOuter) {
-            let isDragging = false;
-            let lastAngle = 0;
-
-            const start = () => isDragging = true;
-            const stop = () => {
-                isDragging = false;
-                const currentRotation = ring.style.transform.match(/rotate\((.*)deg\)/);
-                if (currentRotation) {
-                    let angle = parseFloat(currentRotation[1]);
-                    let snapped = Math.round(angle / 30) * 30;
-                    ring.style.transition = 'transform 0.2s ease-out';
-                    ring.style.transform = `rotate(${snapped}deg)`;
-                    ring.querySelectorAll('.number').forEach(n => {
-                        n.style.transition = 'transform 0.2s';
-                        n.style.transform = `rotate(${-snapped}deg)`;
-                    });
-                    setTimeout(() => ring.style.transition = 'none', 200);
-                }
-            };
-
-            const move = (e) => { if (isDragging) handleRotation(e, ring, isOuter); };
-
-            ring.addEventListener('mousedown', start);
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', stop);
-            ring.addEventListener('touchstart', start);
-            window.addEventListener('touchmove', move);
-            window.addEventListener('touchend', stop);
-        }
-
-        setupRing(outerRing, true);
-        setupRing(innerRing, false);
-    </script>
 </body>
 </html>
-
